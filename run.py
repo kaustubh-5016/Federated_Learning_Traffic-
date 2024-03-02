@@ -41,7 +41,7 @@ if __name__ == '__main__':
     # run_local_model('server_model.h5')
     w1, w2, w3, w4, w5 = get_the_weightage_of_each_client(70, 100)
     # print(w1, w2, w3, w4, w5)
-    iteration = 5
+    iteration = 100
     for i in list(range(1,iteration+1)):
         print('Additional epoch....',i,'/',iteration)
         clients_to_server()

@@ -14,7 +14,7 @@ if __name__ == '__main__':
     val_y = test_y[:-100]
     test_x = test_x[-100:]
     test_y = test_y[-100:]
-    print(train_x.shape, val_x.shape, test_x.shape, train_y.shape, val_y.shape, test_y.shape)
+    # print(train_x.shape, val_x.shape, test_x.shape, train_y.shape, val_y.shape, test_y.shape)
     if os.path.exists(client5_space + 'client5_model.h5') and os.path.exists(client5_space + filename):
         cm = load_model(client5_space + 'client5_model.h5')
         cm.load_weights(client5_space + filename)
