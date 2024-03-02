@@ -27,7 +27,7 @@ def get_the_weightage_of_each_client(lookback,test_size):
     df3= load_data(client3_space, 'SNVAng')[s:]
     df4= load_data(client4_space, 'STTLng')[s:]
     df5= load_data(client5_space, 'WASHng')[s:]
-    print(len(df1),len(df2),len(df3),len(df4),len(df5))
+    # print(len(df1),len(df2),len(df3),len(df4),len(df5))
     w1 = len(df1)/ (len(df1) + len(df2)+len(df3) + len(df4)+len(df5))
     w2 = len(df2) / (len(df1) + len(df2)+len(df3) + len(df4)+len(df5))
     w3 = len(df3) / (len(df1) + len(df2)+len(df3) + len(df4)+len(df5))
@@ -40,8 +40,8 @@ if __name__ == '__main__':
     # server_to_clients('server_model.h5')
     # run_local_model('server_model.h5')
     w1, w2, w3, w4, w5 = get_the_weightage_of_each_client(70, 100)
-    print(w1, w2, w3, w4, w5)
-    iteration = 50
+    # print(w1, w2, w3, w4, w5)
+    iteration = 5
     for i in list(range(1,iteration+1)):
         print('Additional epoch....',i,'/',iteration)
         clients_to_server()

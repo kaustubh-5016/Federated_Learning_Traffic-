@@ -104,6 +104,25 @@ def create_global_model_03():
     ts_model.compile(optimizer=opt, loss='mean_squared_error', metrics=["mse"])
     return ts_model
 
+def create_global_model_04():
+    ts_model = Sequential()
+    # Add LSTM
+    ts_model.add(LSTM(30, input_shape=(1, 70)))
+    ts_model.add(Dropout(0.2))
+    ts_model.add(RepeatVector(30))
+    ts_model.add(LSTM(30, input_shape=(1, 70)))
+    ts_model.add(Dropout(0.2))
+    ts_model.add(RepeatVector(30))
+    ts_model.add(LSTM(30, input_shape=(1, 70)))
+    ts_model.add(Dropout(0.2))
+    ts_model.add(RepeatVector(30))
+    ts_model.add(LSTM(30, input_shape=(1, 70)))
+    ts_model.add(Dense(1))
+    opt = Adam(learning_rate=.0001)
+    # Compile with Adam Optimizer. Optimize for minimum mean square error
+    ts_model.compile(optimizer=opt, loss='mean_squared_error', metrics=["mse"])
+    return ts_model
+
 def train_model_without_callback(ts_model, epochs, batch_size,train_x, train_y,val_x, val_y):
     history = ts_model.fit(train_x, train_y,
                            epochs=epochs, batch_size=batch_size, verbose=1, validation_data=(val_x, val_y),
@@ -133,10 +152,10 @@ def load_test_n_validation_losses(trainHistoryDict, loss_name):
         val_loss = pickle.load(file_pi)
     return loss,val_loss
 
-def plot_train_and_test_loss_wrt_epoch(path,y1, y2):
+def plot_train_and_test_loss_wrt_epoch(path,client,y1, y2):
     plt.plot(list(y1))
     plt.plot(list(y2))
-    plt.title('Learning Curve')
+    plt.title('Learning Curve'+'('+client+')')
     plt.ylabel('Loss')
     plt.xlabel('Epoch')
     plt.legend(['Training loss', 'Validation loss'], loc='upper right')
@@ -144,10 +163,10 @@ def plot_train_and_test_loss_wrt_epoch(path,y1, y2):
     plt.savefig(path+"LearningCurve.jpg")
     # print('Training loss: '+str(list(y1)[-1]), 'Validation loss: '+str(list(y2)[-1]))
 
-def update_and_save_the_learning_curve(path,training_history,loss_name):
+def update_and_save_the_learning_curve(path,training_history,loss_name,client):
     update_loss_n_val_loss(path + 'history', training_history, loss_name)
     t, v = load_test_n_validation_losses(path + 'history', loss_name)
-    plot_train_and_test_loss_wrt_epoch(path, t, v)
+    plot_train_and_test_loss_wrt_epoch(path,client, t, v)
 
 def create_rnn_dataset(data, lookback=1):
     data_x, data_y = [], []
@@ -162,26 +181,28 @@ def load_data(path,col_name):
     np.random.seed(1)
     df = pd.read_csv(path+col_name+".csv", index_col='source')
     df = df[[col_name]]
+    # print(col_name,': ',len(df))
     # print('Std: ' + str(df.std()))
     df.sort_index(inplace=True)
     return df
 
-def make_rnn_data(df,train_portion,lookback):
+def make_rnn_data(col_name,df,train_portion,lookback):
     scaler = StandardScaler()
     scaled_df=scaler.fit_transform(df)
     train_size = int(len(scaled_df)*train_portion)
     train_df = scaled_df[0:train_size,:]
     test_df = scaled_df[train_size-lookback:,:]
-    # print("\nShaped of Train, Test : ", train_df.shape, test_df.shape)
+    # print("\nShaped of Train, Test(",col_name,") : ", train_df.shape, test_df.shape)
     train_x, train_y = create_rnn_dataset(train_df,lookback)
     train_x = np.reshape(train_x, (train_x.shape[0],1, train_x.shape[1]))
-    # print("Shapes of X, Y(train): ",train_x.shape, train_y.shape)
+    # print("Shapes of X, Y(train)(",col_name,") : ", train_x.shape, train_y.shape)
     test_x, test_y = create_rnn_dataset(test_df,lookback)
     test_x = np.reshape(test_x, (test_x.shape[0],1, test_x.shape[1]))
-    # print("Shapes of X, Y(test): ",test_x.shape, test_y.shape)
+    # print("Shapes of X, Y(val+test)(",col_name,") : ", test_x.shape, test_y.shape)
     return train_x, train_y, test_x, test_y
 
 def find_mean_squared_error(model,client,y_test,x_test):
+    # pass
     y_pred = model.predict(x_test).flatten()
     mse = mean_squared_error(y_test, y_pred)
     print(client+"- Mean Squared Error: "+str(mse))
