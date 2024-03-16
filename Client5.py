@@ -18,11 +18,12 @@ if __name__ == '__main__':
     if os.path.exists(client5_space + 'client5_model.h5') and os.path.exists(client5_space + filename):
         cm = load_model(client5_space + 'client5_model.h5')
         cm.load_weights(client5_space + filename)
+        find_mean_squared_error(cm, '5', test_y, test_x)
         history = train_model_without_callback(cm, 1, 256, train_x=train_x, train_y=train_y, val_x=val_x, val_y=val_y)
         cm.save_weights(client5_space + 'client5_weights.h5')
         cm.save(client5_space + 'client5_model.h5')
         update_and_save_the_learning_curve(client5_space, history, 'loss','WASHng')
-        find_mean_squared_error(cm, '5', test_y, test_x)
+
     else:
         m = load_model(client5_space + filename)
         history = train_model_without_callback(m, 1, 256, train_x=train_x, train_y=train_y, val_x=val_x, val_y=val_y)
