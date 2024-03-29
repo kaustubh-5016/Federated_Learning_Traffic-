@@ -36,11 +36,11 @@ def get_the_weightage_of_each_client(lookback,test_size):
     return w1,w2,w3,w4,w5
 
 if __name__ == '__main__':
-    # initialize_global_model_01('server_model.h5')
-    # server_to_clients('server_model.h5')
-    # run_local_model('server_model.h5')
+    initialize_global_model_01('server_model.h5')
+    server_to_clients('server_model.h5')
+    run_local_model('server_model.h5')
     w1, w2, w3, w4, w5 = get_the_weightage_of_each_client(70, 100)
-    # print(w1, w2, w3, w4, w5)
+    print(w1, w2, w3, w4, w5)
     iteration = 50
     for i in list(range(1,iteration+1)):
         print('Additional epoch....',i,'/',iteration)
