@@ -1,6 +1,7 @@
 from Model import *
 from PythonUtils import *
 import subprocess
+import os
 
 def run_local_model(model):
     process1 = subprocess.Popen(["python", "Client1.py",model])
@@ -17,11 +18,11 @@ def run_local_model(model):
 def get_the_weightage_of_each_client(lookback,test_size):
     s = lookback+test_size
     c_path = os.getcwd()
-    client1_space = c_path + '\\data\\client1_space\\'
-    client2_space = c_path + '\\data\\client2_space\\'
-    client3_space = c_path + '\\data\\client3_space\\'
-    client4_space = c_path + '\\data\\client4_space\\'
-    client5_space = c_path + '\\data\\client5_space\\'
+    client1_space = os.path.join(c_path, 'data', 'client1_space')
+    client2_space = os.path.join(c_path, 'data', 'client2_space')
+    client3_space = os.path.join(c_path, 'data', 'client3_space')
+    client4_space = os.path.join(c_path, 'data', 'client4_space')
+    client5_space = os.path.join(c_path, 'data', 'client5_space')
     df1 = load_data(client1_space, 'LOSAng')[s:]
     df2= load_data(client2_space, 'NYCMng')[s:]
     df3= load_data(client3_space, 'SNVAng')[s:]

@@ -14,18 +14,19 @@ from tensorflow.python.keras.models import load_model
 
 def get_weighted_average_of_model_and_set_weight_of_server_model_and_save_server_weights(w_1,w_2,w_3,w_4,w_5):
     c_path = os.getcwd()
-    server_space = c_path + '\\data\\server_space\\'
-    model1_weight_path = server_space + 'client1_weights.h5'
-    model2_weight_path = server_space + 'client2_weights.h5'
-    model3_weight_path = server_space + 'client3_weights.h5'
-    model4_weight_path = server_space + 'client4_weights.h5'
-    model5_weight_path = server_space + 'client5_weights.h5'
+    server_space = os.path.join(c_path, 'data', 'server_space')
+    model1_weight_path = os.path.join(server_space, 'client1_weights.h5')
+    model2_weight_path = os.path.join(server_space, 'client2_weights.h5')
+    model3_weight_path = os.path.join(server_space, 'client3_weights.h5')
+    model4_weight_path = os.path.join(server_space, 'client4_weights.h5')
+    model5_weight_path = os.path.join(server_space, 'client5_weights.h5')
 
-    m1 = load_model(server_space+'server_model.h5')
-    m2 = load_model(server_space+'server_model.h5')
-    m3 = load_model(server_space+'server_model.h5')
-    m4 = load_model(server_space+'server_model.h5')
-    m5 = load_model(server_space+'server_model.h5')
+    server_model_path = os.path.join(server_space, 'server_model.h5')
+    m1 = load_model(server_model_path)
+    m2 = load_model(server_model_path)
+    m3 = load_model(server_model_path)
+    m4 = load_model(server_model_path)
+    m5 = load_model(server_model_path)
 
     m1.load_weights(model1_weight_path)
     m2.load_weights(model2_weight_path)
@@ -45,14 +46,14 @@ def get_weighted_average_of_model_and_set_weight_of_server_model_and_save_server
     delete_file(model3_weight_path)
     delete_file(model4_weight_path)
     delete_file(model5_weight_path)
-    m = load_model(server_space + 'server_model.h5')
+    m = load_model(server_model_path)
     m.set_weights(average_weights)
-    m.save_weights(server_space+'server_weights.h5')
+    m.save_weights(os.path.join(server_space, 'server_weights.h5'))
 
 def load_server_model_and_set_weights(model,average_weights):
     c_path = os.getcwd()
-    server_space = c_path + '\\data\\server_space\\'
-    model_path = server_space + model
+    server_space = os.path.join(c_path, 'data', 'server_space')
+    model_path = os.path.join(server_space, model)
     m = load_model(model_path)
     m.set_weights(average_weights)
 
@@ -61,7 +62,7 @@ def initialize_global_model_01(model_name):
     model = create_global_model_03()
     dummy_input = np.random.rand(1, 1, 70).astype(np.float32)
     model(dummy_input)
-    model.save(c_path + '/data/server_space/'+model_name)
+    model.save(os.path.join(c_path, 'data', 'server_space', model_name))
 
 def create_global_model_01():
     model = Sequential()
@@ -160,12 +161,13 @@ def plot_train_and_test_loss_wrt_epoch(path,client,y1, y2):
     plt.xlabel('Epoch')
     plt.legend(['Training loss', 'Validation loss'], loc='upper right')
     # plt.legend(['Training loss: '+str(list(y1)[-1]), 'Validation loss: '+str(list(y2)[-1])], loc='upper right')
-    plt.savefig(path+"LearningCurve.jpg")
+    plt.savefig(os.path.join(path, "LearningCurve.jpg"))
     # print('Training loss: '+str(list(y1)[-1]), 'Validation loss: '+str(list(y2)[-1]))
 
 def update_and_save_the_learning_curve(path,training_history,loss_name,client):
-    update_loss_n_val_loss(path + 'history', training_history, loss_name)
-    t, v = load_test_n_validation_losses(path + 'history', loss_name)
+    history_path = os.path.join(path, 'history')
+    update_loss_n_val_loss(history_path, training_history, loss_name)
+    t, v = load_test_n_validation_losses(history_path, loss_name)
     plot_train_and_test_loss_wrt_epoch(path,client, t, v)
 
 def create_rnn_dataset(data, lookback=1):
@@ -179,7 +181,7 @@ def create_rnn_dataset(data, lookback=1):
 
 def load_data(path,col_name):
     np.random.seed(1)
-    df = pd.read_csv(path+col_name+".csv", index_col='source')
+    df = pd.read_csv(os.path.join(path, col_name + ".csv"), index_col='source')
     df = df[[col_name]]
     # print(col_name,': ',len(df))
     # print('Std: ' + str(df.std()))
