@@ -3,6 +3,7 @@ import pickle
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from keras.callbacks import Callback
 from keras.models import Sequential
 from keras.layers import LSTM, Dense, Dropout, RepeatVector
 from keras.optimizers import Adam
@@ -124,10 +125,25 @@ def create_global_model_04():
     ts_model.compile(optimizer=opt, loss='mean_squared_error', metrics=["mse"])
     return ts_model
 
-def train_model_without_callback(ts_model, epochs, batch_size,train_x, train_y,val_x, val_y):
+def train_model_without_callback(ts_model, epochs, batch_size,train_x, train_y,val_x, val_y, progress_callback=None):
+    callbacks = []
+    verbose_setting = 1
+
+    if progress_callback is not None:
+        verbose_setting = 0
+
+        class ProgressReporter(Callback):
+            def on_epoch_begin(self, epoch, logs=None):
+                progress_callback(epoch + 1, epochs, "start", logs or {})
+
+            def on_epoch_end(self, epoch, logs=None):
+                progress_callback(epoch + 1, epochs, "end", logs or {})
+
+        callbacks.append(ProgressReporter())
+
     history = ts_model.fit(train_x, train_y,
-                           epochs=epochs, batch_size=batch_size, verbose=1, validation_data=(val_x, val_y),
-                           shuffle=False)
+                           epochs=epochs, batch_size=batch_size, verbose=verbose_setting, validation_data=(val_x, val_y),
+                           shuffle=False, callbacks=callbacks)
     return history
 
 def update_loss(trainHistoryDict, history,loss_name):

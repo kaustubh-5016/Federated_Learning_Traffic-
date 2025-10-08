@@ -1,5 +1,7 @@
+import json
 import os
 import shutil
+import time
 
 
 def space_path(*parts):
@@ -42,3 +44,39 @@ def clients_to_server():
 def delete_file(file_path):
     if os.path.exists(file_path):
         os.remove(file_path)
+
+
+def client_status_path(space_name):
+    """Return the path to the status.json file for the given client space."""
+    return os.path.join(space_path(space_name), "status.json")
+
+
+def write_client_status(space_name, status):
+    """Persist a status dictionary for the client."""
+    payload = {
+        "space": space_name,
+        "timestamp": time.time(),
+        **status,
+    }
+    path = client_status_path(space_name)
+    with open(path, "w", encoding="utf-8") as handle:
+        json.dump(payload, handle, indent=2)
+        handle.write("\n")
+
+
+def load_client_status(space_name):
+    """Load the most recent status for a client. Returns an empty dict if missing."""
+    path = client_status_path(space_name)
+    if os.path.exists(path):
+        with open(path, "r", encoding="utf-8") as handle:
+            return json.load(handle)
+    return {}
+
+
+def load_connection_info(space_name):
+    """Return connection details written by assign_client_ips.py, if available."""
+    path = os.path.join(space_path(space_name), "connection.json")
+    if os.path.exists(path):
+        with open(path, "r", encoding="utf-8") as handle:
+            return json.load(handle)
+    return {}
