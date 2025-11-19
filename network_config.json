@@ -1,0 +1,32 @@
+{
+  "server": {
+    "mac": ["2C:CF:67:A9:1A:40", "2C:CF:67:A9:1A:41"]
+  },
+  "clients": [
+    {
+      "id": "client1",
+      "mac": ["2C:CF:67:A9:19:56", "2C:CF:67:A9:19:57"],
+      "dataset": "LOSAng"
+    },
+    {
+      "id": "client2",
+      "mac": ["2C:CF:67:A9:1A:EA", "2C:CF:67:A9:1A:EB"],
+      "dataset": "NYCMng"
+    },
+    {
+      "id": "client3",
+      "mac": ["2C:CF:67:A9:17:AE", "2C:CF:67:A9:17:AF"],
+      "dataset": "SNVAng"
+    },
+    {
+      "id": "client4",
+      "mac": ["2C:CF:67:A9:19:C8", "2C:CF:67:A9:19:C9"],
+      "dataset": "STTLng"
+    },
+    {
+      "id": "client5",
+      "mac": ["2C:CF:67:A9:1A:A6", "2C:CF:67:A9:1A:A7"],
+      "dataset": "WASHng"
+    }
+  ]
+}
